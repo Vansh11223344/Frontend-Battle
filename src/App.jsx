@@ -75,7 +75,7 @@ function Navbar() {
         aria-label="Main navigation"
       >
         <a href="#" className="nav-logo" aria-label="NeuralFlow Home">
-          NeuralFlow<span style={{ color: 'var(--saffron)' }}></span>
+          NeuraFlow<span style={{ color: 'var(--saffron)' }}></span>
         </a>
 
         <ul className="nav-links" role="list">
@@ -305,7 +305,7 @@ function Hero() {
             by AI
           </h1>
           <p className="hero-subtitle fade-up delay-200" ref={addRef(2)}>
-            NeuralFlow transforms raw, unstructured data into intelligent,
+            NeuraFlow transforms raw, unstructured data into intelligent,
             self-healing pipelines. Automate what takes your team days — in minutes.
           </p>
           <div className="hero-actions fade-up delay-300" ref={addRef(3)}>
@@ -345,7 +345,7 @@ function Hero() {
               <span className="terminal-dot" style={{ background: '#FF5F57' }} />
               <span className="terminal-dot" style={{ background: '#FFBD2E' }} />
               <span className="terminal-dot" style={{ background: '#28CA41' }} />
-              <span className="terminal-title">neuralflow — pipeline.js</span>
+              <span className="terminal-title">neuraflow — pipeline.js</span>
             </div>
 
             <div className="terminal-body" style={{ minHeight: '190px' }}>
@@ -569,7 +569,7 @@ function BentoFeatures() {
           <h2 className="section-title">Every Tool Your Data Pipeline Needs</h2>
           <p className="section-desc">
             Purpose-built modules that snap together — from ingestion to transformation
-            to delivery, NeuralFlow handles the entire lifecycle.
+            to delivery, NeuraFlow handles the entire lifecycle.
           </p>
         </div>
 
@@ -966,7 +966,7 @@ function Footer() {
             style={{ fontFamily: 'var(--font-mono)', fontSize: '1.25rem', fontWeight: 700, color: 'var(--forsythia)', textDecoration: 'none' }}
             aria-label="NeuralFlow Home"
           >
-            NeuralFlow<span style={{ color: 'var(--saffron)' }}>.</span>
+            NeuraFlow<span style={{ color: 'var(--saffron)' }}></span>
           </a>
           <p>
             The AI-native data automation platform for teams that can't afford downtime.
