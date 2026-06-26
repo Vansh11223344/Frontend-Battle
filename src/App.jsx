@@ -55,6 +55,33 @@ export const LinkIcon = normalizeIcon(LinkIconRaw);
 export const SearchIcon = normalizeIcon(SearchIconRaw);
 export const XMarkIcon = normalizeIcon(XMarkIconRaw);
 
+// ─── CountUp Component ──────────────────────────────────────
+function CountUp({ end, duration = 1800, suffix = '' }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const startTime = performance.now();
+    const startValue = 0;
+    const endValue = end;
+
+    const updateCount = (now) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const current = Math.floor(progress * (endValue - startValue) + startValue);
+      setCount(current);
+      if (progress < 1) {
+        requestAnimationFrame(updateCount);
+      } else {
+        setCount(endValue);
+      }
+    };
+    requestAnimationFrame(updateCount);
+  }, [end, duration]);
+
+  return <span>{count}{suffix}</span>;
+}
+
 // ─── Navbar ──────────────────────────────────────────────────
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -75,7 +102,7 @@ function Navbar() {
         aria-label="Main navigation"
       >
         <a href="#" className="nav-logo" aria-label="NeuralFlow Home">
-          NeuraFlow<span style={{ color: 'var(--saffron)' }}></span>
+          NeuralFlow<span style={{ color: 'var(--saffron)' }}>.</span>
         </a>
 
         <ul className="nav-links" role="list">
@@ -121,59 +148,6 @@ function Navbar() {
         </a>
       </div>
     </>
-  );
-}
-
-// ─── Animated Counter Hook ───────────────────────────────────
-function AnimatedCounter({ value, duration = 2000, prefix = '', suffix = '', decimals = 0 }) {
-  const [count, setCount] = useState(0);
-  const countRef = useRef(null);
-
-  useEffect(() => {
-    let start = null;
-    let animationFrameId;
-    let observer;
-
-    const step = (timestamp) => {
-      if (!start) start = timestamp;
-      const progress = Math.min((timestamp - start) / duration, 1);
-      // Ease out quartic equation
-      const easeOut = 1 - Math.pow(1 - progress, 4);
-      setCount(easeOut * value);
-      
-      if (progress < 1) {
-        animationFrameId = window.requestAnimationFrame(step);
-      } else {
-        setCount(value);
-      }
-    };
-
-    const handleIntersection = ([entry]) => {
-      if (entry.isIntersecting) {
-        start = null; // Reset start time
-        animationFrameId = window.requestAnimationFrame(step);
-      } else {
-        // Reset to 0 when scrolled out of view to re-animate on scroll
-        setCount(0);
-        if (animationFrameId) window.cancelAnimationFrame(animationFrameId);
-      }
-    };
-
-    if (countRef.current) {
-      observer = new IntersectionObserver(handleIntersection, { threshold: 0.1 });
-      observer.observe(countRef.current);
-    }
-
-    return () => {
-      if (observer) observer.disconnect();
-      if (animationFrameId) window.cancelAnimationFrame(animationFrameId);
-    };
-  }, [value, duration]);
-
-  return (
-    <span ref={countRef}>
-      {prefix}{(count).toFixed(decimals)}{suffix}
-    </span>
   );
 }
 
@@ -300,12 +274,12 @@ function Hero() {
             AI Automation Platform
           </p>
           <h1 className="hero-title fade-up delay-100" ref={addRef(1)}>
-            Data Pipelines,<br/>
-            <span className="accent">Reimagined</span>{' '}
+            Data Pipelines,<br />
+            <span className="accent">Reimagined</span><br />
             by AI
           </h1>
           <p className="hero-subtitle fade-up delay-200" ref={addRef(2)}>
-            NeuraFlow transforms raw, unstructured data into intelligent,
+            NeuralFlow transforms raw, unstructured data into intelligent,
             self-healing pipelines. Automate what takes your team days — in minutes.
           </p>
           <div className="hero-actions fade-up delay-300" ref={addRef(3)}>
@@ -319,21 +293,15 @@ function Hero() {
           </div>
           <div className="hero-stats fade-in delay-400" ref={addRef(4)}>
             <div className="stat-item">
-              <span className="stat-value">
-                <AnimatedCounter value={98.7} decimals={1} suffix="%" />
-              </span>
+              <span className="stat-value"><CountUp end={98.7} suffix="%" /></span>
               <span className="stat-label">Pipeline uptime</span>
             </div>
             <div className="stat-item">
-              <span className="stat-value">
-                <AnimatedCounter value={12} suffix="×" />
-              </span>
+              <span className="stat-value"><CountUp end={12} suffix="×" /></span>
               <span className="stat-label">Faster processing</span>
             </div>
             <div className="stat-item">
-              <span className="stat-value">
-                <AnimatedCounter value={500} suffix="+" />
-              </span>
+              <span className="stat-value"><CountUp end={500} suffix="+" /></span>
               <span className="stat-label">Integrations</span>
             </div>
           </div>
@@ -345,7 +313,7 @@ function Hero() {
               <span className="terminal-dot" style={{ background: '#FF5F57' }} />
               <span className="terminal-dot" style={{ background: '#FFBD2E' }} />
               <span className="terminal-dot" style={{ background: '#28CA41' }} />
-              <span className="terminal-title">neuraflow — pipeline.js</span>
+              <span className="terminal-title">neuralflow — pipeline.js</span>
             </div>
 
             <div className="terminal-body" style={{ minHeight: '190px' }}>
@@ -478,7 +446,7 @@ function BentoCard({ feature, isActive, onActivate }) {
 
   return (
     <article
-      className={`bento-card fade-up ${feature.size === 'large' ? 'large' : ''} ${isActive ? 'active' : ''}`}
+      className={`bento-card ${feature.size === 'large' ? 'large' : ''} ${isActive ? 'active' : ''}`}
       onMouseEnter={() => onActivate(feature.id)}
       onMouseLeave={() => onActivate(null)}
       onMouseMove={handleMouseMove}
@@ -501,7 +469,7 @@ function AccordionItem({ feature, isOpen, onToggle }) {
 
   return (
     <div
-      className={`accordion-item fade-up ${isOpen ? 'active' : ''}`}
+      className={`accordion-item ${isOpen ? 'active' : ''}`}
       id={`accordion-item-${feature.id}`}
     >
       <button
@@ -564,12 +532,12 @@ function BentoFeatures() {
   return (
     <section className="bento-section" id="features" aria-label="Features">
       <div className="bento-inner">
-        <div className="fade-up" style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
           <p className="section-eyebrow">Platform Capabilities</p>
           <h2 className="section-title">Every Tool Your Data Pipeline Needs</h2>
           <p className="section-desc">
             Purpose-built modules that snap together — from ingestion to transformation
-            to delivery, NeuraFlow handles the entire lifecycle.
+            to delivery, NeuralFlow handles the entire lifecycle.
           </p>
         </div>
 
@@ -648,6 +616,7 @@ const TIER_FEATURES = {
   ],
 };
 
+// ─── Currency Buttons (horizontal) ──────────────────────────
 function CurrencyButtons({ currentCurrency, onCurrencyChange }) {
   const currencies = [
     { key: 'USD', label: '$ USD' },
@@ -713,12 +682,12 @@ function PricingCard({ tierKey, isFeatured }) {
 
   return (
     <article
-      className={`pricing-card fade-up ${isFeatured ? 'featured' : ''}`}
+      className={`pricing-card ${isFeatured ? 'featured' : ''}`}
       ref={containerRef}
       data-tier={tierKey}
       aria-label={`${tier.label} pricing plan`}
     >
-      {isFeatured && <div className="featured-badge" style={{ position: 'relative', zIndex: 10 }}>Most Popular</div>}
+      {isFeatured && <div className="featured-badge">Most Popular</div>}
       <p className="pricing-tier">{tier.label}</p>
       <div className="pricing-price">
         <span className="price-currency" ref={symbolRef}>$</span>
@@ -761,6 +730,7 @@ function Pricing() {
   const annualBtnRef = useRef(null);
   const containerRef = useRef(null);
 
+  // Force re-render to update button active states (only when currency changes)
   const [currency, setCurrency] = useState('USD');
 
   const updateAllPrices = useCallback(() => {
@@ -786,20 +756,20 @@ function Pricing() {
   const handleCurrencyChange = useCallback((newCurrency) => {
     if (currencyRef.current === newCurrency) return;
     currencyRef.current = newCurrency;
-    setCurrency(newCurrency);
+    setCurrency(newCurrency); // triggers re-render only for this component (isolated)
     updateAllPrices();
   }, [updateAllPrices]);
 
   return (
     <section className="pricing-section" id="pricing" aria-label="Pricing">
       <div className="pricing-inner">
-        <div className="fade-up" style={{ textAlign: 'center', marginBottom: '0.5rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '0.5rem' }}>
           <p className="section-eyebrow">Pricing</p>
           <h2 className="section-title">Transparent, Scalable Pricing</h2>
           <p className="section-desc">Start free. Scale as you grow. No surprise bills — ever.</p>
         </div>
 
-        <div className="pricing-controls fade-up" role="group" aria-label="Pricing controls">
+        <div className="pricing-controls" role="group" aria-label="Pricing controls">
           <div className="billing-toggle" role="radiogroup" aria-label="Billing cycle">
             <button
               ref={monthlyBtnRef}
@@ -834,7 +804,7 @@ function Pricing() {
           <PricingCard tierKey="scale"   isFeatured={false} />
         </div>
 
-        <p className="fade-up" style={{
+        <p style={{
           textAlign: 'center',
           marginTop: '2.5rem',
           fontFamily: 'var(--font-sans)',
@@ -875,7 +845,7 @@ function Testimonials() {
   return (
     <section className="testimonials-section" id="testimonials" aria-label="Customer testimonials">
       <div className="testimonials-inner">
-        <div className="fade-up" style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
           <p className="section-eyebrow">Social Proof</p>
           <h2 className="section-title">Trusted by Data Teams Worldwide</h2>
           <p className="section-desc">
@@ -886,7 +856,7 @@ function Testimonials() {
 
         <div className="testimonials-grid" role="list">
           {TESTIMONIALS.map((t) => (
-            <article key={t.name} className="testimonial-card fade-up" aria-label={`Testimonial from ${t.name}`}>
+            <article key={t.name} className="testimonial-card" aria-label={`Testimonial from ${t.name}`}>
               <div className="stars" aria-label="5 out of 5 stars" role="img">
                 {[...Array(5)].map((_, i) => (
                   <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="var(--forsythia)" aria-hidden="true">
@@ -906,7 +876,7 @@ function Testimonials() {
           ))}
         </div>
 
-        <div className="logos-bar fade-up" aria-label="Trusted by these companies" role="list">
+        <div className="logos-bar" aria-label="Trusted by these companies" role="list">
           {LOGOS.map(logo => (
             <span key={logo} className="logo-item" role="listitem">{logo}</span>
           ))}
@@ -920,7 +890,7 @@ function Testimonials() {
 function CTASection() {
   return (
     <section className="cta-section" aria-label="Call to action">
-      <div className="cta-box fade-up">
+      <div className="cta-box">
         <p style={{
           fontFamily: 'var(--font-mono)',
           fontSize: '0.75rem',
@@ -966,7 +936,7 @@ function Footer() {
             style={{ fontFamily: 'var(--font-mono)', fontSize: '1.25rem', fontWeight: 700, color: 'var(--forsythia)', textDecoration: 'none' }}
             aria-label="NeuralFlow Home"
           >
-            NeuraFlow<span style={{ color: 'var(--saffron)' }}></span>
+            NeuralFlow<span style={{ color: 'var(--saffron)' }}>.</span>
           </a>
           <p>
             The AI-native data automation platform for teams that can't afford downtime.
@@ -1029,26 +999,38 @@ export default function App() {
     }
   }, []);
 
-  // Scroll-triggered dynamic reveal/hide animations
+  // Scroll-triggered reveal animations with stagger and better sensitivity
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
+        entries.forEach((entry, index) => {
           if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-          } else {
-            // Removes the 'visible' class when you scroll past, causing it to dynamically
-            // fade out, and seamlessly fade back in when scrolled back into view
-            entry.target.classList.remove('visible');
+            // Stagger each child element inside the observed parent for a cascading effect
+            const target = entry.target;
+            // If the target is a container, reveal its children with stagger
+            const children = target.querySelectorAll('.fade-up, .fade-in');
+            if (children.length > 0) {
+              children.forEach((child, i) => {
+                setTimeout(() => {
+                  child.classList.add('visible');
+                }, i * 80);
+              });
+            } else {
+              // Single element
+              setTimeout(() => {
+                target.classList.add('visible');
+              }, index * 80);
+            }
+            observer.unobserve(target);
           }
         });
       },
-      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+      { threshold: 0.08, rootMargin: '0px 0px -20px 0px' } // trigger earlier
     );
 
-    // Observe all elements with .fade-up or .fade-in, excluding hero (hero handles itself)
-    const elements = document.querySelectorAll('section:not(#hero) .fade-up, section:not(#hero) .fade-in');
-    elements.forEach(el => observer.observe(el));
+    // Observe each section container, not individual elements
+    const sections = document.querySelectorAll('section:not(#hero)');
+    sections.forEach(section => observer.observe(section));
 
     return () => observer.disconnect();
   }, []);
